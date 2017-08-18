@@ -229,26 +229,37 @@
         }
 
         function uploadToCloud(base64){
-            var postUrl = '/upload';//提交地址
-
-            var form = document.createElement("form");
-            document.body.appendChild(form);
-            form.method = "POST";
-
-            var userinfo = document.createElement("input");
-            userinfo.setAttribute("id", "userinfo");
-            userinfo.setAttribute("type", "hidden");
-            userinfo.value = "zhang";
-
-            var pic = document.createElement("input");
-            pic.setAttribute("id", "base64");
-            pic.setAttribute("type", "hidden");
-            pic.value = base64;
-
-            form.appendChild(userinfo);
-            form.appendChild(pic);
-            form.action = postUrl;
-            form.submit();
+            $.ajax({
+                url: "/upload",
+                type: "POST",
+                data: {
+                    "img": base64,
+                    "userinfo" : "{'id':'id'}"
+                },
+                success: function(data) {
+                    console.log(data);
+                }
+            });
+            // var postUrl = '/upload';//提交地址
+            //
+            // var form = document.createElement("form");
+            // document.body.appendChild(form);
+            // form.method = "POST";
+            //
+            // var userinfo = document.createElement("input");
+            // userinfo.setAttribute("id", "userinfo");
+            // userinfo.setAttribute("type", "hidden");
+            // userinfo.value = "zhang";
+            //
+            // var pic = document.createElement("input");
+            // pic.setAttribute("id", "base64");
+            // pic.setAttribute("type", "hidden");
+            // pic.value = base64;
+            //
+            // form.appendChild(userinfo);
+            // form.appendChild(pic);
+            // form.action = postUrl;
+            // form.submit();
         }
     });
     </script>

@@ -5,14 +5,13 @@ exports.upload = function(req, res, next){
 };
 
 exports.saveToDB = function(req, res, next){
-    var userinfo = req.body.userinfo;
-    console.log(userinfo);
-    var base64 = req.body.base64;
-    console.log(base64);
-    var PicObject = AV.Object.extend('PicObject');
-    var picObject = new PicObject();
-    picObject.save({
-        userinfo:"ren",
-        picture:base64,
-      })
+  var userinfo = req.body.userinfo;
+  var img = req.body.img;
+
+  var PicObject = AV.Object.extend('PicObject');
+  var picObject = new PicObject();
+  picObject.save({
+      userinfo:"ren",
+      picture:img,
+    })
 };

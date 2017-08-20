@@ -2,7 +2,7 @@ var AV = require('leanengine');
 
 
 exports.upload = function(req, res, next){
-    return res.sendfile(global.PATH + '/public/upload.html');
+    return res.sendfile(global.PATH + '/public/index.html');
 };
 
 exports.saveToDB = function(req, res, next){

@@ -1,7 +1,6 @@
 var AV = require('leanengine');
 
 exports.showList = function(req, res, next){
-    console.log('abcdedf');
     var cql = 'select * from PicObject';
     AV.Query.doCloudQuery(cql).then(function (data) {
         var list = [];

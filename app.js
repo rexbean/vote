@@ -29,6 +29,7 @@ app.enable('trust proxy');
 // 需要重定向到 HTTPS 可去除下一行的注释。
 // app.use(AV.Cloud.HttpsRedirect());
 global.PATH = __dirname;
+global.userid = 0;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -38,6 +39,10 @@ app.use(cookieParser());
 //   res.render('index', { currentTime: new Date() });
 // });
 
+app.all('*',function(req,res,next){
+  res.header("Access-Control-Allow-Origin", "*");
+  next();
+})
 // 可以将一类的路由单独保存在一个文件中
 app.use('/', require('./routes/todos'));
 

@@ -5,17 +5,13 @@ var AV = require('leanengine');
 var Todo = AV.Object.extend('Todo');
 var picObject = AV.Object.extend('PicObject');
 
-//var authMiddleware = require('./middlewares/auth');
+var userMiddleware = require(global.PATH + '/middlewares/user');
 var uploadMiddleware = require(global.PATH + '/middlewares/upload');
 var showListMiddleware = require(global.PATH + '/middlewares/showList');
 var voteMiddleware = require(global.PATH + '/middlewares/vote');
 
-    // /user/upload/:id //为:id用户上传图片
-    // /user/get/:id //获得:id用户的图片信息
-    // /user/list //获得所有用户的图片信息
-    // /user/vote/:id //为:id用户投票
+router.post('/user/create',userMiddleware.setUser);
 
-//router.get('/user',authMiddleWare.authentics);
 router.get('/upload',uploadMiddleware.upload);
 router.post('/upload',uploadMiddleware.saveToDB);
 

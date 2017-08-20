@@ -7,8 +7,8 @@
   <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
   <script src="https://cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
-
-  <script src="https://unpkg.com/vue"></script>
+  <script src="https://cdn.bootcss.com/vue/2.4.2/vue.min.js"></script>
+  <!-- <script src="https://unpkg.com/vue"></script> -->
 
   <style>
 
@@ -61,8 +61,44 @@
     height: 300px;
   }
 
-  #compressedPic{
+  #compressedPic,.item{
     width: 100%;
+    height: 100%;
+  }
+
+  .wechat-list-item {
+    width: calc(50% - 20px);
+    padding: 10px 10px 40px 10px;
+    float: left;
+    position: relative;
+  }
+
+  .vote-numbers{
+    position: absolute;
+    right: 10px;
+    width: 50px;
+    padding: 0 10px;
+    background: #fff;
+  }
+
+  .vote-per{
+    float: right;
+    line-height: 2em;
+  }
+
+  .vote-font{
+    font-size: 1.2em;
+  }
+
+  .vote-btn{
+    position: absolute;
+    width: calc(100% - 40px);
+    height: 2em;
+    line-height: 2em;
+    bottom: 0;
+    padding: 0 10px;
+    border: 1px solid;
+    text-align: center;
   }
 
   </style>
@@ -71,9 +107,28 @@
 <body>
 
   <div id="app">
+
+    <div class="page-container" v-show="page === 'landscape' ">
+        请把手机竖过来亲
+    </div>
+
     <div class="page-container" v-show="page === 'upload' ">
       <div class="weui-flex wechat-upload-picwrapper">
           <img id="compressedPic" src="" />
+      </div>
+    </div>
+
+    <div class="page-container" v-show="page === 'vote' ">
+      <div v-if="list.length == 0">还没人上传哟</div>
+      <div v-else>
+         <div v-for="item in list" class="weui-flex wechat-list-item">
+           <img class="item" :src="getURL(item)" />
+           <span class="vote-numbers" >
+             <span class="vote-font" v-text="item.vote"></span>
+             <span class="vote-per">票</span>
+           </span>
+           <div class="vote-btn" @click="vote(item)">我要投票</div>
+         </div>
       </div>
     </div>
 
@@ -94,7 +149,7 @@
       <!-- 投票 -->
       <div class="weui-flex ">
 
-        <div class="weui-flex__item" @click="vote()">
+        <div class="weui-flex__item" @click="toVote()">
           <div class="weui-uploader">
               <div class="weui-uploader__bd ">
                   <div class="weui-uploader__input-box wechat-float-right">
@@ -107,7 +162,7 @@
 
         </div>
 
-        <div class="weui-flex__item">
+        <div id="upload" class="weui-flex__item">
           <div class="weui-uploader">
               <div class="weui-uploader__bd ">
                   <div class="weui-uploader__input-box wechat-float-left">
@@ -143,6 +198,39 @@
 
   </div>
 
+  <script>
+
+
+
+  var serverip = 'http://myvote.leanapp.cn'
+  var server = {
+    getCookie : function(key){
+      return $.cookie(key)
+    },
+    setCookie : function(key,value){
+      $.cookie(key, value , { path: '/' });
+      return $.cookie(key)
+    },
+    setLocalStorage:function(key,value){
+      localStorage.setItem(key,value);
+    },
+    getLocalStorage:function(key){
+      return localStorage.getItem(key);
+    },
+    ajax(url,method,data){
+      url = serverip + url
+      return $.ajax({
+        url:url,
+        type:method,
+        data:data,
+        timeout:10000
+      })
+    },
+    getDateTime:function(date){
+      return date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate()
+    }
+  };
+  </script>
 
   <script>
     var vue = new Vue({
@@ -150,49 +238,96 @@
       data: {
         page:"main", // main , mypic , list
         picdata:null,
+        list:[]
       },
       methods: {
+        getURL:function(item){
+          return item.base64;
+        },
         changePage:function(page){
           var vm = this;
           vm.page = page;
         },
-        vote:function(){
+
+        getPage:function(){
           var vm = this;
-          vm.changePage("vote");
+          return vm.page;
+        },
+
+        toVote:function(){
+          var vm = this;
+          vm.loaddata();
         },
         setUserPic:function(base64){
           var vm = this;
           vm.picdata = base64;
+        },
+        loaddata(){
+          var vm = this;
+          server.ajax('/showlist','get',{})
+          .then(function(response){
+            if(response.success){
+              var data = response.data;
+              for (var i=0;i<data.length;i++){
+                vm.list.push(JSON.parse(data[i]));
+              }
+              vm.changePage("vote");
+            }
+          })
+          .fail(function(error){
+            console.error(error);
+          })
+        },
+
+        vote:function(item){
+          var id = item.userinfo;
+          var date = new Date();
+          var votetime = server.getCookie('votetime');
+          if(votetime && votetime == server.getDateTime(date)){
+            alert('今天已经投过啦，请明天再试')
+            return
+          }
+          console.log(id)
+          server.ajax('/vote','post',{
+            token:id
+          }).then(function(response){
+            console.log(response);
+            if(response.success){
+
+              server.setCookie("votetime",server.getDateTime(date));
+            }
+          }).fail(function(error){
+            console.log(error)
+          })
         }
+
       }
     })
   </script>
 
   <script>
-    var serverip = 'http://myvote.leanapp.cn'
-    var server = {
-      getCookie : function(key){
-        return $.cookie(key)
-      },
-      setCookie : function(key,value){
-        $.cookie(key, value , { path: '/' });
-        return $.cookie(key)
-      },
-      setLocalStorage:function(key,value){
-        localStorage.setItem(key,value);
-      },
-      setLocalStorage:function(key){
-        localStorage.getItem(key);
-      },
-      ajax(url,method,data){
-        url = serverip + url
-        return $.ajax({
-          url:url,
-          type:method,
-          data:data
-        })
+  var mql = window.matchMedia('(orientation: portrait)');
+
+  window.nowpage = ""
+
+  function handle(){
+    if(mql.matches) {
+      console.log('portrait');
+      if(window.nowpage != ""){
+        vue.changePage(window.nowpage);
+        window.nowpage = "";
       }
-    };
+    }else{
+      console.log('landscape');
+      window.nowpage = vue.getPage();
+      vue.changePage('landscape');
+    }
+  }
+
+  mql.addListener(handle);
+  </script>
+
+  <script>
 
     (function(global){
       if(!global.getCookie('token')){
@@ -213,6 +348,15 @@
       }
     }(server))
 
+    var base64 = server.getLocalStorage("userupload");
+    if(base64){
+      document.getElementById('compressedPic').src = base64;
+      $("#uploaderInput_upload").css({"display":'none'});
+      $("#upload").on("click",function(){
+        vue.changePage('upload');
+      })
+    }
+
   </script>
 
   <script>
@@ -223,11 +367,12 @@
       // 1024KB，也就是 4MB
       var maxSize = 1024 * 1024 * 4;
       // maxWidth
-      var maxWidth = 150;
+      var maxWidth = 300;
       // maxheight
-      var maxHeight =150;
+      var maxHeight = 300;
 
       $('#uploaderInput_upload').on('change', function (event) {
+
           var files = event.target.files;
           // 如果没有选中文件，直接返回
           if (files.length === 0) {
@@ -263,7 +408,6 @@
               console.log(blob);
               window.URL = window.URL || window.webkitURL;
               var blobURL = window.URL.createObjectURL(blob); // and get it's URL
-
               // helper Image object
               var image = new Image();
               image.src = blobURL;
@@ -301,9 +445,6 @@
           var ctx = canvas.getContext("2d");
           ctx.drawImage(img, 0, 0, width, height);
           var base64 = canvas.toDataURL("image/jpeg",1); // get the data from canvas as 70% JPG (can be also PNG, etc.)
-
-          document.getElementById('compressedPic').src = base64;
-
           return base64;
       }
 
@@ -316,6 +457,7 @@
             if(response.sucess){
               vue.changePage('upload');
               server.setLocalStorage('userupload',base64);
+              document.getElementById('compressedPic').src = base64;
             }
           }).fail(function(error){
             console.log(error)

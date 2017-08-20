@@ -6,7 +6,7 @@ exports.showList = function(req, res, next){
         var list = [];
         for(var i=0; i<data.results.length; i++){
             var obj = {
-              result : data.results[i],
+              vote : data.results[i].get('vote'),
               userinfo : data.results[i].get('userinfo'),
               base64 : data.results[i].get('picture')
             }

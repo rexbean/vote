@@ -4,6 +4,7 @@ exports.vote = function(req, res, next){
     var cql = 'select * from PicObject where userinfo = ?';
     var cql1 = 'update PicObject set vote = ? where objectId = ?'
     var pvalue = [signedToken];
+    console.log(req.body);
     var pvalues =[];
     AV.Query.doCloudQuery(cql,pvalue).then(function (data) {
         var vote = data.results[0].get('vote');

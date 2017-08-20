@@ -17,7 +17,7 @@ router.post('/upload',uploadMiddleware.saveToDB);
 
 router.get('/showList',showListMiddleware.showList);
 
-router.get('/vote',voteMiddleware.vote);
+router.post('/vote',voteMiddleware.vote);
 
 
 

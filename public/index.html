@@ -570,18 +570,28 @@
             console.log(error)
           })
       }
-
-      function showlist(){
-
-      }
-
-      function vote(){
-
-      }
   });
 
   </script>
 
+  <script>
+
+  document.addEventListener('WeixinJSBridgeReady',function(){
+    WeixinJSBridge.on('menu:share:timeline', function(argv){
+      WeixinJSBridge.invoke('shareTimeline',{
+        "img_url": 'http://myvote.leanapp.cn/img/title.jpeg',
+        "img_width": "320",
+        "img_height": "320",
+        "link": "https://www.baidu.com",
+        "desc": "我是加菲",
+        "title": '喵呜'
+      }, function(res) {
+        _report('timeline', res.err_msg);
+      });
+    });
+  })
+
+  </script>
 
 </body>
 </html>

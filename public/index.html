@@ -12,9 +12,9 @@
 
   <style>
 
-  .page-container{
+  /*.page-container{
     padding:20px 0 0 0;
-  }
+  }*/
   .text-center{
     text-align: center;
   }
@@ -34,7 +34,20 @@
     float: right
   }
   .toupiao,.shangchuan{
-    margin: 0em 1.4em;
+    width: 180px;
+    height: 70px;
+    /*width: 100px;
+    font-size: 22px;
+    padding: 10px 50px;
+    text-align: center;*/
+  }
+  .toupiao{
+    background: url('./img/vote.png') no-repeat;
+    background-size: cover;
+  }
+  .shangchuan{
+    background: url('./img/upload.png') no-repeat;
+    background-size: cover;
   }
   .weui-uploader__bd{
     margin: 0;
@@ -47,35 +60,48 @@
     margin-top: 1em;
   }
   .wechat-article{
-    background: #eee;
+    /*background: #eee;*/
     border-radius: 0.4em;
     width: 100%;
-    padding: 10px 15px;
+    padding: 10px 0px;
   }
   .wechat-section-lastone{
     margin-bottom: 0 !important;
   }
 
   .wechat-upload-picwrapper{
-    padding: 20px;
-    height: 300px;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background: url('./img/success.png') no-repeat;
+    background-size: contain;
+    background-color: #ffe400;
   }
 
   #compressedPic{
-    width: 100%;
-    height: 100%;
+    /*width: 100%;
+    height: 100%;*/
+    width: 300px;
+    height: 200px;
+    position: absolute;
+    top: 50px;
+    left: calc(50% - 150px);
   }
+
   .item{
-    width: 150px;
-    height: 150px;
-    margin: auto;
+    width: 138px;
+    height: 100px;
+    margin-left: 2px;
+    margin-top: 28px;
   }
 
   .wechat-list-item {
     width: calc(50% - 20px);
-    padding: 10px 10px 40px 10px;
+    padding: 10px 10px 0px 10px;
     float: left;
     position: relative;
+    /*float: left;
+    position: relative;*/
   }
 
   .vote-numbers{
@@ -106,6 +132,58 @@
     text-align: center;
   }
 
+  .vertical{
+    background: url(./img/vertical.png) no-repeat;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+  }
+
+  .weui-article h3 {
+    font-size: 14px;
+  }
+
+  .wechat-main-top{
+    background: #ffe400;
+    width: 100%;
+    height: 300px;
+  }
+  .weui-uploader{
+    display: none;
+  }
+
+  .wechat-main-btns{
+    height: 100px;
+    background: #ffe400;
+  }
+
+  .wechat-main-top-pic{
+    background: url(./img/top.png) no-repeat;
+    height: 220px;
+    width: 300px;
+    text-align: center;
+    background-size: contain;
+    margin-left: auto;
+    margin-right: auto;
+    display: inline-block;
+    margin-top: 40px;
+  }
+
+  .wechat-vote-list{
+    background:#ffe400;
+    width: 100%;
+    /*height: 100%;*/
+    padding-bottom: 20px;
+    position: absolute;
+  }
+  .wechat-vote-list-wrapper{
+    width: 151px;
+    height:201px;
+    background: url('./img/user.png') no-repeat;
+    background-size: contain;
+    margin: auto;
+  }
+
   </style>
 
 </head>
@@ -113,8 +191,8 @@
 
   <div id="app">
 
-    <div class="page-container" v-show="page === 'landscape' ">
-        请把手机竖过来亲
+    <div class="page-container " v-show="page === 'landscape' ">
+      <div class="vertical"></div>
     </div>
 
     <div class="page-container" v-show="page === 'upload' ">
@@ -126,33 +204,51 @@
     <div class="page-container" v-show="page === 'vote' ">
       <div v-if="list.length == 0">还没人上传哟</div>
       <div v-else>
-         <div v-for="item in list" class="weui-flex wechat-list-item">
-           <img class="item" :src="getURL(item)" />
-           <span class="vote-numbers" >
-             <span class="vote-font" v-text="item.vote"></span>
-             <span class="vote-per">票</span>
-           </span>
-           <div class="vote-btn" @click="vote(item)">我要投票</div>
+
+         <div class="weui-flex__item text-center">
+            <div class="wechat-main-top">
+                <div class="wechat-main-top-pic"></div>
+            </div>
          </div>
+
+         <div class="weui-flex__item wechat-vote-list">
+
+           <div v-for="item in list" class="weui-flex wechat-list-item">
+             <div class="wechat-vote-list-wrapper" @click="vote(item)">
+               <img class="item" :src="getURL(item)" />
+             </div>
+
+             <!-- <span class="vote-numbers" >
+               <span class="vote-font" v-text="item.vote"></span>
+               <span class="vote-per">票</span>
+             </span>
+             <div class="vote-btn" @click="vote(item)">我要投票</div> -->
+           </div>
+         </div>
+
       </div>
     </div>
 
     <div class="page-container" v-show="page === 'main' ">
       <!-- title -->
       <div class="weui-flex text-center wechat-font-h1">
-        <div class="weui-flex__item">最创意</div>
+        <div class="weui-flex__item">
+            <div class="wechat-main-top">
+                <div class="wechat-main-top-pic"></div>
+            </div>
+        </div>
       </div>
 
-      <div class="weui-flex text-center wechat-font-h3">
+      <!-- <div class="weui-flex text-center wechat-font-h3">
         <div class="weui-flex__item">拍照姿（知）势（识）</div>
       </div>
 
       <div class="weui-flex text-center wechat-font-h1">
         <div class="weui-flex__item">赢大奖</div>
-      </div>
+      </div> -->
 
       <!-- 投票 -->
-      <div class="weui-flex ">
+      <div class="weui-flex wechat-main-btns">
 
         <div class="weui-flex__item" @click="toVote()">
           <div class="weui-uploader">
@@ -163,21 +259,23 @@
               </div>
           </div>
 
-          <div class="toupiao wechat-float-right" >我要投票</div>
+          <div class="toupiao wechat-float-right" ></div>
 
         </div>
 
+        <input id="uploaderInput_upload" style="display:none" class="weui-uploader__input" type="file" accept="image/*" multiple />
+
         <div id="upload" class="weui-flex__item">
-          <div class="weui-uploader">
+          <!-- <div class="weui-uploader">
               <div class="weui-uploader__bd ">
                   <div class="weui-uploader__input-box wechat-float-left">
                       <input id="uploaderInput_upload" class="weui-uploader__input" type="file" accept="image/*" multiple />
                   </div>
               </div>
-          </div>
+          </div> -->
 
           <!-- <img id="compressedPic" src =""/> -->
-          <div class="shangchuan wechat-float-left">我要上传</div>
+          <div class="shangchuan wechat-float-left"></div>
 
         </div>
       </div>
@@ -187,12 +285,12 @@
             <h1>活动说明</h1>
 
             <section class="wechat-section-lastone">
-                <h3>1.文案文案文案文案文案文案文案文案</h3>
-                <h3>2.文案文案文案文案文案文案文案文案</h3>
-                <h3>3.文案文案文案文案文案文案文案文案</h3>
-                <h3>4.文案文案文案文案文案文案文案文案</h3>
-                <h3>5.文案文案文案文案文案文案文案文案</h3>
-                <h3>（文案文案文案文案文案文案文案文案）</h3>
+                <h3>1.活动时间8月24日到9月4日</h3>
+                <h3>2.每人有一次上传姿势的机会</h3>
+                <h3>3.可以投票给喜欢的小伙伴，也可以投票给无与伦比的自己</h3>
+                <h3>4.投票不可取消，但是别怕，是不记名投票哦</h3>
+                <h3>5.上传图片格式为JPG</h3>
+                <h3>（本活动最终解释权归起个响亮的名字公众号所有）</h3>
             </section>
 
         </article>
@@ -298,7 +396,7 @@
           }).then(function(response){
             console.log(response);
             if(response.success){
-
+              alert('投票成功!')
               server.setCookie("votetime",server.getDateTime(date));
             }
           }).fail(function(error){
@@ -356,9 +454,13 @@
     var base64 = server.getLocalStorage("userupload");
     if(base64){
       document.getElementById('compressedPic').src = base64;
-      $("#uploaderInput_upload").css({"display":'none'});
+      // $("#uploaderInput_upload").css({"display":'none'});
       $("#upload").on("click",function(){
         vue.changePage('upload');
+      })
+    }else{
+      $("#upload").on("click",function(){
+        $("#uploaderInput_upload").click();
       })
     }
 
